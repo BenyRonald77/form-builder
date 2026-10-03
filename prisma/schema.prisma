@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Form {
+  id            Int        @id @default(autoincrement())
+  title         String
+  description   String     @default("")
+  schema        String     @default("[]") // JSON: Question[]
+  responseLimit Int?
+  isPublished   Boolean    @default(false)
+  createdAt     String     @default("")
+  updatedAt     String     @default("")
+  responses     Response[]
+
+  @@map("forms")
+}
+
+model Response {
+  id          Int    @id @default(autoincrement())
+  formId      Int
+  answers     String @default("{}") // JSON: { questionId: value }
+  submittedAt String @default("")
+  form        Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@index([formId])
+  @@map("responses")
+}
